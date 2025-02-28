@@ -6,18 +6,20 @@ const highScoreDisplay = document.getElementById("highScore");
 
 // Game state
 let gameRunning = true;
+let isPaused = false;
 
 // Ball properties
 let ballRadius = 10;
 let x = canvas.width/2;
 let y = canvas.height-30;
-let dx = 3;
-let dy = -3;
+let dx = 4; // Increased speed
+let dy = -4; // Increased speed
 
 // Paddle properties
 const paddleHeight = 10;
 const paddleWidth = 75;
 let paddleX = (canvas.width-paddleWidth)/2;
+const paddleSpeed = 9; // Increased paddle speed
 
 // Brick properties
 const brickRowCount = 3;
@@ -69,6 +71,9 @@ function keyDownHandler(e) {
     else if(e.key === "Left" || e.key === "ArrowLeft") {
         leftPressed = true;
     }
+    else if(e.key === "p" || e.key === "P") {
+        togglePause();
+    }
 }
 
 function keyUpHandler(e) {
@@ -117,17 +122,51 @@ function collisionDetection() {
     }
 }
 
-function showGameEndMessage(message) {
+function togglePause() {
+    if (gameRunning) {
+        isPaused = !isPaused;
+        if (!isPaused) {
+            draw();
+        } else {
+            showPauseScreen();
+        }
+    }
+}
+
+function showPauseScreen() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     ctx.font = "30px Poppins";
     ctx.fillStyle = "#fff";
     ctx.textAlign = "center";
-    ctx.fillText(message, canvas.width/2, canvas.height/2);
+    ctx.fillText("GAME PAUSED", canvas.width/2, canvas.height/2);
     
+    ctx.font = "16px Poppins";
+    ctx.fillText("Press 'P' to continue", canvas.width/2, canvas.height/2 + 40);
+}
+
+function showGameEndMessage(message) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw large crown emojis
+    ctx.font = "50px Arial";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center";
+    ctx.fillText("👑", canvas.width/2 - 120, canvas.height/2);
+    ctx.fillText("👑", canvas.width/2 + 120, canvas.height/2);
+    
+    // Draw main message
+    ctx.font = "bold 35px Poppins";
+    ctx.fillStyle = "#ffd700"; // Gold color for the victory message
+    ctx.fillText("MORE THAN A", canvas.width/2, canvas.height/2 - 20);
+    ctx.fillText("CONQUEROR", canvas.width/2, canvas.height/2 + 20);
+    
+    // Draw score
     ctx.font = "20px Poppins";
-    ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 40);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 70);
 }
 
 function drawBall() {
@@ -169,12 +208,13 @@ function drawBricks() {
 
 function restartGame() {
     gameRunning = true;
+    isPaused = false;
     score = 0;
     scoreDisplay.textContent = "0";
     x = canvas.width/2;
     y = canvas.height-30;
-    dx = 3;
-    dy = -3;
+    dx = 4; // Increased speed
+    dy = -4; // Increased speed
     paddleX = (canvas.width-paddleWidth)/2;
     initializeBricks();
     restartButton.style.display = "none";
@@ -182,7 +222,7 @@ function restartGame() {
 }
 
 function draw() {
-    if (!gameRunning) return;
+    if (!gameRunning || isPaused) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
@@ -200,6 +240,9 @@ function draw() {
     else if(y + dy > canvas.height-ballRadius) {
         if(x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
+            // Add slight speed increase on paddle hits
+            dx = dx * 1.01;
+            dy = dy * 1.01;
         }
         else {
             gameRunning = false;
@@ -211,10 +254,10 @@ function draw() {
 
     // Paddle movement
     if(rightPressed && paddleX < canvas.width-paddleWidth) {
-        paddleX += 7;
+        paddleX += paddleSpeed;
     }
     else if(leftPressed && paddleX > 0) {
-        paddleX -= 7;
+        paddleX -= paddleSpeed;
     }
 
     // Keep paddle within canvas bounds
