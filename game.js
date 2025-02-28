@@ -150,23 +150,36 @@ function showGameEndMessage(message) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw large crown emojis
-    ctx.font = "50px Arial";
-    ctx.fillStyle = "#fff";
-    ctx.textAlign = "center";
-    ctx.fillText("👑", canvas.width/2 - 120, canvas.height/2);
-    ctx.fillText("👑", canvas.width/2 + 120, canvas.height/2);
-    
-    // Draw main message
-    ctx.font = "bold 35px Poppins";
-    ctx.fillStyle = "#ffd700"; // Gold color for the victory message
-    ctx.fillText("MORE THAN A", canvas.width/2, canvas.height/2 - 20);
-    ctx.fillText("CONQUEROR", canvas.width/2, canvas.height/2 + 20);
-    
-    // Draw score
-    ctx.font = "20px Poppins";
-    ctx.fillStyle = "#fff";
-    ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 70);
+    if (message === "Game Over") {
+        // Game Over message
+        ctx.font = "bold 40px Poppins";
+        ctx.fillStyle = "#ff3333";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 20);
+        
+        // Draw score
+        ctx.font = "20px Poppins";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 20);
+    } else {
+        // Victory message with crowns
+        ctx.font = "50px Arial";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.fillText("👑", canvas.width/2 - 120, canvas.height/2);
+        ctx.fillText("👑", canvas.width/2 + 120, canvas.height/2);
+        
+        // Draw main victory message
+        ctx.font = "bold 35px Poppins";
+        ctx.fillStyle = "#ffd700"; // Gold color for the victory message
+        ctx.fillText("MORE THAN A", canvas.width/2, canvas.height/2 - 20);
+        ctx.fillText("CONQUEROR", canvas.width/2, canvas.height/2 + 20);
+        
+        // Draw score
+        ctx.font = "20px Poppins";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 70);
+    }
 }
 
 function drawBall() {
